@@ -2,7 +2,7 @@ import './app1.css'
 import $ from 'jquery'
 
 const view = {
-    el: null,
+    container: null,
 
     html: `
         <div>
@@ -20,56 +20,55 @@ const view = {
 
     init(container) {
         view.container = $(container)
-        view.render()
     },
 
-    render() {
-        if (!view.el) {
-            view.el = $(view.html.replace('{{n}}', model.data.n)).appendTo(view.container)
-        } else {
-            const newEl = $(view.html.replace('{{n}}', model.data.n))
-            view.el.replaceWith(newEl)
-            view.el = newEl
+    render(val) {
+        if (view.container.children().length) {
+            view.container.empty()
         }
+        $(view.html.replace('{{n}}', val)).appendTo(view.container)
     }
 }
 
 const controller = {
     init(container) {
         view.init(container)
-
-        controller.ui = {
-            btnAdd: $('#add'),
-            btnMinus: $('#minus'),
-            btnMulti: $('#multi'),
-            btnDevide: $('#devide'),
-            num: $('.output span')
-        }
-
-        controller.bindEvents()
+        view.render(model.data.n)
+        controller.autoBindEvents()
     },
 
-    bindEvents() {
-        view.container.on('click', '#add', () => {
-            model.data.n += 1
-            view.render()
-            localStorage.setItem('n', model.data.n)
-        })
-        view.container.on('click', '#minus', () => {
-            model.data.n -= 1
-            view.render()
-            localStorage.setItem('n', model.data.n)
-        })
-        view.container.on('click', '#multi', () => {
-            model.data.n *= 2
-            view.render()
-            localStorage.setItem('n', model.data.n)
-        })
-        view.container.on('click', '#devide', () => {
-            model.data.n /= 2
-            view.render()
-            localStorage.setItem('n', model.data.n)
-        })
+    events: {
+        'click #add': 'add',
+        'click #minus': 'minus',
+        'click #multi': 'multi',
+        'click #devide': 'devide'
+    },
+
+    add() {
+        model.data.n += 1
+    },
+
+    minus() {
+        model.data.n -= 1
+    },
+
+    multi() {
+        model.data.n *= 2
+    },
+
+    devide() {
+        model.data.n /= 2
+    },
+
+    autoBindEvents() {
+        for (let key in controller.events) {
+            let [event, selector] = key.split(' ')
+            view.container.on(event, selector, () => {
+                controller[controller.events[key]]()
+                view.render(model.data.n)
+                localStorage.setItem('n', model.data.n)
+            })
+        }
     }
 }
 
