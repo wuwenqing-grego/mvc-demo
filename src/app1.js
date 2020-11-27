@@ -2,26 +2,41 @@ import './app1.css'
 import $ from 'jquery'
 
 const view = {
+    el: null,
+
     html: `
-        <div class="output">
-            <span>{{n}}</span>
-        </div>
-        <div class="actions">
-            <button id="add">+1</button>
-            <button id="minus">-1</button>
-            <button id="multi">*2</button>
-            <button id="devide">/2</button>
+        <div>
+            <div class="output">
+                <span>{{n}}</span>
+            </div>
+            <div class="actions">
+                <button id="add">+1</button>
+                <button id="minus">-1</button>
+                <button id="multi">*2</button>
+                <button id="devide">/2</button>
+            </div>
         </div>
     `,
 
-    render(container) {
-        $(view.html.replace('{{n}}', model.data.n)).appendTo($(container))
+    init(container) {
+        view.container = $(container)
+        view.render()
+    },
+
+    render() {
+        if (!view.el) {
+            view.el = $(view.html.replace('{{n}}', model.data.n)).appendTo(view.container)
+        } else {
+            const newEl = $(view.html.replace('{{n}}', model.data.n))
+            view.el.replaceWith(newEl)
+            view.el = newEl
+        }
     }
 }
 
 const controller = {
     init(container) {
-        view.render(container)
+        view.init(container)
 
         controller.ui = {
             btnAdd: $('#add'),
@@ -35,24 +50,24 @@ const controller = {
     },
 
     bindEvents() {
-        controller.ui.btnAdd.on('click', () => {
+        view.container.on('click', '#add', () => {
             model.data.n += 1
-            controller.ui.num.text(model.data.n)
+            view.render()
             localStorage.setItem('n', model.data.n)
         })
-        controller.ui.btnMinus.on('click', () => {
+        view.container.on('click', '#minus', () => {
             model.data.n -= 1
-            controller.ui.num.text(model.data.n)
+            view.render()
             localStorage.setItem('n', model.data.n)
         })
-        controller.ui.btnMulti.on('click', () => {
+        view.container.on('click', '#multi', () => {
             model.data.n *= 2
-            controller.ui.num.text(model.data.n)
+            view.render()
             localStorage.setItem('n', model.data.n)
         })
-        controller.ui.btnDevide.on('click', () => {
+        view.container.on('click', '#devide', () => {
             model.data.n /= 2
-            controller.ui.num.text(model.data.n)
+            view.render()
             localStorage.setItem('n', model.data.n)
         })
     }

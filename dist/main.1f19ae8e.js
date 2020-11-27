@@ -11300,14 +11300,25 @@ var _jquery = _interopRequireDefault(require("jquery"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var view = {
-  html: "\n        <div class=\"output\">\n            <span>{{n}}</span>\n        </div>\n        <div class=\"actions\">\n            <button id=\"add\">+1</button>\n            <button id=\"minus\">-1</button>\n            <button id=\"multi\">*2</button>\n            <button id=\"devide\">/2</button>\n        </div>\n    ",
-  render: function render(container) {
-    (0, _jquery.default)(view.html.replace('{{n}}', model.data.n)).appendTo((0, _jquery.default)(container));
+  el: null,
+  html: "\n        <div>\n            <div class=\"output\">\n                <span>{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add\">+1</button>\n                <button id=\"minus\">-1</button>\n                <button id=\"multi\">*2</button>\n                <button id=\"devide\">/2</button>\n            </div>\n        </div>\n    ",
+  init: function init(container) {
+    view.container = (0, _jquery.default)(container);
+    view.render();
+  },
+  render: function render() {
+    if (!view.el) {
+      view.el = (0, _jquery.default)(view.html.replace('{{n}}', model.data.n)).appendTo(view.container);
+    } else {
+      var newEl = (0, _jquery.default)(view.html.replace('{{n}}', model.data.n));
+      view.el.replaceWith(newEl);
+      view.el = newEl;
+    }
   }
 };
 var controller = {
   init: function init(container) {
-    view.render(container);
+    view.init(container);
     controller.ui = {
       btnAdd: (0, _jquery.default)('#add'),
       btnMinus: (0, _jquery.default)('#minus'),
@@ -11318,24 +11329,24 @@ var controller = {
     controller.bindEvents();
   },
   bindEvents: function bindEvents() {
-    controller.ui.btnAdd.on('click', function () {
+    view.container.on('click', '#add', function () {
       model.data.n += 1;
-      controller.ui.num.text(model.data.n);
+      view.render();
       localStorage.setItem('n', model.data.n);
     });
-    controller.ui.btnMinus.on('click', function () {
+    view.container.on('click', '#minus', function () {
       model.data.n -= 1;
-      controller.ui.num.text(model.data.n);
+      view.render();
       localStorage.setItem('n', model.data.n);
     });
-    controller.ui.btnMulti.on('click', function () {
+    view.container.on('click', '#multi', function () {
       model.data.n *= 2;
-      controller.ui.num.text(model.data.n);
+      view.render();
       localStorage.setItem('n', model.data.n);
     });
-    controller.ui.btnDevide.on('click', function () {
+    view.container.on('click', '#devide', function () {
       model.data.n /= 2;
-      controller.ui.num.text(model.data.n);
+      view.render();
       localStorage.setItem('n', model.data.n);
     });
   }
