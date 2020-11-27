@@ -1,0 +1,24 @@
+#app2 {
+    border: 1px solid blue;
+}
+
+#app2 .nav {
+    display: flex;
+}
+
+#app2 .nav li {
+    border: 1px solid black;
+    width: 50%;
+}
+
+#app2 .nav li.selected {
+    background-color: yellow;
+}
+
+#app2 .content li {
+    display: none;
+}
+
+#app2 .content li.active {
+    display: block;
+}
