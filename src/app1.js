@@ -1,10 +1,10 @@
 import './app1.css'
 import $ from 'jquery'
 
-const html = `
-    <section id="app1">
+const view = {
+    html: `
         <div class="output">
-            <span>100</span>
+            <span>{{n}}</span>
         </div>
         <div class="actions">
             <button id="add">+1</button>
@@ -12,35 +12,56 @@ const html = `
             <button id="multi">*2</button>
             <button id="devide">/2</button>
         </div>
-    </section>
-`
-$(html).appendTo($('body .page'))
+    `,
 
-const $btnAdd = $('#add')
-const $btnMinus = $('#minus')
-const $btnMulti = $('#multi')
-const $btnDevide = $('#devide')
-const $num = $('.output span')
+    render(container) {
+        $(view.html.replace('{{n}}', model.data.n)).appendTo($(container))
+    }
+}
 
-$num.text(localStorage.getItem('n') || 100)
+const controller = {
+    init(container) {
+        view.render(container)
 
-$btnAdd.on('click', () => {
-    let n = +$num.text() + 1
-    $num.text(n)
-    localStorage.setItem('n', n)
-})
-$btnMinus.on('click', () => {
-    let n = +$num.text() - 1
-    $num.text(n)
-    localStorage.setItem('n', n)
-})
-$btnMulti.on('click', () => {
-    let n = +$num.text() * 2
-    $num.text(n)
-    localStorage.setItem('n', n)
-})
-$btnDevide.on('click', () => {
-    let n = +$num.text() / 2
-    $num.text(n)
-    localStorage.setItem('n', n)
-})
+        controller.ui = {
+            btnAdd: $('#add'),
+            btnMinus: $('#minus'),
+            btnMulti: $('#multi'),
+            btnDevide: $('#devide'),
+            num: $('.output span')
+        }
+
+        controller.bindEvents()
+    },
+
+    bindEvents() {
+        controller.ui.btnAdd.on('click', () => {
+            model.data.n += 1
+            controller.ui.num.text(model.data.n)
+            localStorage.setItem('n', model.data.n)
+        })
+        controller.ui.btnMinus.on('click', () => {
+            model.data.n -= 1
+            controller.ui.num.text(model.data.n)
+            localStorage.setItem('n', model.data.n)
+        })
+        controller.ui.btnMulti.on('click', () => {
+            model.data.n *= 2
+            controller.ui.num.text(model.data.n)
+            localStorage.setItem('n', model.data.n)
+        })
+        controller.ui.btnDevide.on('click', () => {
+            model.data.n /= 2
+            controller.ui.num.text(model.data.n)
+            localStorage.setItem('n', model.data.n)
+        })
+    }
+}
+
+const model = {
+    data: {
+        n: +localStorage.getItem('n') || 100
+    }
+}
+
+export default controller

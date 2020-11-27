@@ -11288,40 +11288,65 @@ return jQuery;
 },{"process":"../../../../../../.config/yarn/global/node_modules/process/browser.js"}],"app1.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 require("./app1.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var html = "\n    <section id=\"app1\">\n        <div class=\"output\">\n            <span>100</span>\n        </div>\n        <div class=\"actions\">\n            <button id=\"add\">+1</button>\n            <button id=\"minus\">-1</button>\n            <button id=\"multi\">*2</button>\n            <button id=\"devide\">/2</button>\n        </div>\n    </section>\n";
-(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
-var $btnAdd = (0, _jquery.default)('#add');
-var $btnMinus = (0, _jquery.default)('#minus');
-var $btnMulti = (0, _jquery.default)('#multi');
-var $btnDevide = (0, _jquery.default)('#devide');
-var $num = (0, _jquery.default)('.output span');
-$num.text(localStorage.getItem('n') || 100);
-$btnAdd.on('click', function () {
-  var n = +$num.text() + 1;
-  $num.text(n);
-  localStorage.setItem('n', n);
-});
-$btnMinus.on('click', function () {
-  var n = +$num.text() - 1;
-  $num.text(n);
-  localStorage.setItem('n', n);
-});
-$btnMulti.on('click', function () {
-  var n = +$num.text() * 2;
-  $num.text(n);
-  localStorage.setItem('n', n);
-});
-$btnDevide.on('click', function () {
-  var n = +$num.text() / 2;
-  $num.text(n);
-  localStorage.setItem('n', n);
-});
+var view = {
+  html: "\n        <div class=\"output\">\n            <span>{{n}}</span>\n        </div>\n        <div class=\"actions\">\n            <button id=\"add\">+1</button>\n            <button id=\"minus\">-1</button>\n            <button id=\"multi\">*2</button>\n            <button id=\"devide\">/2</button>\n        </div>\n    ",
+  render: function render(container) {
+    (0, _jquery.default)(view.html.replace('{{n}}', model.data.n)).appendTo((0, _jquery.default)(container));
+  }
+};
+var controller = {
+  init: function init(container) {
+    view.render(container);
+    controller.ui = {
+      btnAdd: (0, _jquery.default)('#add'),
+      btnMinus: (0, _jquery.default)('#minus'),
+      btnMulti: (0, _jquery.default)('#multi'),
+      btnDevide: (0, _jquery.default)('#devide'),
+      num: (0, _jquery.default)('.output span')
+    };
+    controller.bindEvents();
+  },
+  bindEvents: function bindEvents() {
+    controller.ui.btnAdd.on('click', function () {
+      model.data.n += 1;
+      controller.ui.num.text(model.data.n);
+      localStorage.setItem('n', model.data.n);
+    });
+    controller.ui.btnMinus.on('click', function () {
+      model.data.n -= 1;
+      controller.ui.num.text(model.data.n);
+      localStorage.setItem('n', model.data.n);
+    });
+    controller.ui.btnMulti.on('click', function () {
+      model.data.n *= 2;
+      controller.ui.num.text(model.data.n);
+      localStorage.setItem('n', model.data.n);
+    });
+    controller.ui.btnDevide.on('click', function () {
+      model.data.n /= 2;
+      controller.ui.num.text(model.data.n);
+      localStorage.setItem('n', model.data.n);
+    });
+  }
+};
+var model = {
+  data: {
+    n: +localStorage.getItem('n') || 100
+  }
+};
+var _default = controller;
+exports.default = _default;
 },{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11409,13 +11434,17 @@ require("./global.css");
 
 require("./reset.css");
 
-require("./app1.js");
+var _app = _interopRequireDefault(require("./app1.js"));
 
 require("./app2.js");
 
 require("./app3.js");
 
 require("./app4.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_app.default.init('body .page #app1');
 },{"./global.css":"global.css","./reset.css":"reset.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -11444,7 +11473,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59883" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61450" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
