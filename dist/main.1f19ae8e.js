@@ -11294,6 +11294,8 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n    <section id=\"app1\">\n        <div class=\"output\">\n            <span>100</span>\n        </div>\n        <div class=\"actions\">\n            <button id=\"add\">+1</button>\n            <button id=\"minus\">-1</button>\n            <button id=\"multi\">*2</button>\n            <button id=\"devide\">/2</button>\n        </div>\n    </section>\n";
+(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
 var $btnAdd = (0, _jquery.default)('#add');
 var $btnMinus = (0, _jquery.default)('#minus');
 var $btnMulti = (0, _jquery.default)('#multi');
@@ -11334,6 +11336,8 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n    <section id=\"app2\">\n        <ol class=\"nav\">\n            <li><span>1111</span></li>\n            <li><span>2222</span></li>\n        </ol>\n        <ol class=\"content\">\n            <li>content1</li>\n            <li>content2</li>\n        </ol>\n    </section>\n";
+(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
 var $navBar = (0, _jquery.default)('#app2 .nav');
 var $content = (0, _jquery.default)('#app2 .content');
 $navBar.on('click', 'li', function (e) {
@@ -11358,6 +11362,8 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n    <section id=\"app3\">\n        <div class=\"square\"></div>\n    </section>\n";
+(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
 var $square = (0, _jquery.default)('#app3 .square');
 var active = localStorage.getItem('app3-active') === 'yes';
 
@@ -11388,6 +11394,8 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n    <section id=\"app4\">\n        <div class=\"circle\"></div>\n    </section>\n";
+(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
 var $circle = (0, _jquery.default)('#app4 .circle');
 $circle.on('mouseenter', function () {
   $circle.addClass('active');

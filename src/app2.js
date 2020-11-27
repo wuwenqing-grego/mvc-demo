@@ -1,6 +1,20 @@
 import './app2.css'
 import $ from 'jquery'
 
+const html = `
+    <section id="app2">
+        <ol class="nav">
+            <li><span>1111</span></li>
+            <li><span>2222</span></li>
+        </ol>
+        <ol class="content">
+            <li>content1</li>
+            <li>content2</li>
+        </ol>
+    </section>
+`
+$(html).appendTo($('body .page'))
+
 const $navBar = $('#app2 .nav')
 const $content = $('#app2 .content')
 
