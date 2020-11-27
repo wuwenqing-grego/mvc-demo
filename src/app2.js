@@ -7,6 +7,7 @@ const $content = $('#app2 .content')
 $navBar.on('click', 'li', (e) => {
     const $li = $(e.currentTarget)
     const index = $li.index()
+    localStorage.setItem('app2-index', index)
     $li.addClass('selected')
         .siblings().removeClass('selected')
     $content.children()
@@ -14,4 +15,4 @@ $navBar.on('click', 'li', (e) => {
         .siblings().removeClass('active')
 })
 
-$navBar.children().eq(0).trigger('click')
+$navBar.children().eq(localStorage.getItem('app2-index') || 0).trigger('click')

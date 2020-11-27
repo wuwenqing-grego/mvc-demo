@@ -11339,10 +11339,11 @@ var $content = (0, _jquery.default)('#app2 .content');
 $navBar.on('click', 'li', function (e) {
   var $li = (0, _jquery.default)(e.currentTarget);
   var index = $li.index();
+  localStorage.setItem('app2-index', index);
   $li.addClass('selected').siblings().removeClass('selected');
   $content.children().eq(index).addClass('active').siblings().removeClass('active');
 });
-$navBar.children().eq(0).trigger('click');
+$navBar.children().eq(localStorage.getItem('app2-index') || 0).trigger('click');
 },{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11358,8 +11359,20 @@ var _jquery = _interopRequireDefault(require("jquery"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var $square = (0, _jquery.default)('#app3 .square');
+var active = localStorage.getItem('app3-active') === 'yes';
+
+if (active) {
+  $square.addClass('active');
+}
+
 $square.on('click', function () {
-  $square.toggleClass('active');
+  if ($square.hasClass('active')) {
+    $square.removeClass('active');
+    localStorage.setItem('app3-active', 'no');
+  } else {
+    $square.addClass('active');
+    localStorage.setItem('app3-active', 'yes');
+  }
 });
 },{"./app3.css":"app3.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app4.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
@@ -11423,7 +11436,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57307" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59883" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
