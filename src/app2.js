@@ -1,32 +1,77 @@
 import './app2.css'
 import $ from 'jquery'
 
-const html = `
-    <section id="app2">
-        <ol class="nav">
-            <li><span>1111</span></li>
-            <li><span>2222</span></li>
-        </ol>
-        <ol class="content">
-            <li>content1</li>
-            <li>content2</li>
-        </ol>
-    </section>
-`
-$(html).appendTo($('body .page'))
+const $eventBus = $({})
 
-const $navBar = $('#app2 .nav')
-const $content = $('#app2 .content')
+const model = {
+    data: {
+        index: +localStorage.getItem('app2-index') || 0
+    },
 
-$navBar.on('click', 'li', (e) => {
-    const $li = $(e.currentTarget)
-    const index = $li.index()
-    localStorage.setItem('app2-index', index)
-    $li.addClass('selected')
-        .siblings().removeClass('selected')
-    $content.children()
-        .eq(index).addClass('active')
-        .siblings().removeClass('active')
-})
+    update(data) {
+        Object.assign(model.data, data)
+        $eventBus.trigger('model:updated')
+        localStorage.setItem('app2-index', model.data.index)
+    }
+}
 
-$navBar.children().eq(localStorage.getItem('app2-index') || 0).trigger('click')
+const view = {
+    container: null,
+
+    html(index) {
+        return `
+            <div>
+                <ol class="nav">
+                    <li class="${index ? '' : 'selected'}" data-index="0"><span>1111</span></li>
+                    <li class="${index ? 'selected' : ''}" data-index="1"><span>2222</span></li>
+                </ol>
+                <ol class="content">
+                    <li class="${index ? '' : 'active'}">content1</li>
+                    <li class="${index ? 'active' : ''}">content2</li>
+                </ol>
+            </div>
+        `
+    },
+
+    init(container) {
+        view.container = $(container)
+    },
+
+    render(index) {
+        if (view.container.children().length) {
+            view.container.empty()
+        }
+        $(view.html(index)).appendTo(view.container)
+    }
+}
+
+const controller = {
+    init(container) {
+        view.init(container)
+        view.render(model.data.index)
+        controller.autoBindEvents()
+        $eventBus.on('model:updated', () => {
+            view.render(model.data.index)
+        })
+    },
+
+    events: {
+        'click .nav li': 'switch'
+    },
+
+    switch(e) {
+        const selectedIndex = +e.currentTarget.dataset.index
+        if (selectedIndex !== model.data.index) {
+            model.update({index: selectedIndex})
+        }
+    },
+
+    autoBindEvents() {
+        for (let key in controller.events) {
+            let [event, ...selector] = key.split(' ')
+            view.container.on(event, selector.join(' '), controller[controller.events[key]])
+        }
+    }
+}
+
+export default controller

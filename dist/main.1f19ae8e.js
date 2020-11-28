@@ -11314,11 +11314,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var $eventBus = (0, _jquery.default)({});
 var model = {
   data: {
-    n: +localStorage.getItem('n') || 100
+    n: +localStorage.getItem('app1-n') || 100
   },
   update: function update(data) {
     Object.assign(model.data, data);
     $eventBus.trigger('model:updated');
+    localStorage.setItem('app1-n', model.data.n);
   }
 };
 var view = {
@@ -11371,20 +11372,13 @@ var controller = {
     });
   },
   autoBindEvents: function autoBindEvents() {
-    var _loop = function _loop(key) {
+    for (var key in controller.events) {
       var _key$split = key.split(' '),
           _key$split2 = _slicedToArray(_key$split, 2),
           event = _key$split2[0],
           selector = _key$split2[1];
 
-      view.container.on(event, selector, function () {
-        controller[controller.events[key]]();
-        localStorage.setItem('n', model.data.n);
-      });
-    };
-
-    for (var key in controller.events) {
-      _loop(key);
+      view.container.on(event, selector, controller[controller.events[key]]);
     }
   }
 };
@@ -11398,24 +11392,90 @@ module.hot.accept(reloadCSS);
 },{"_css_loader":"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/css-loader.js"}],"app2.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 require("./app2.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var html = "\n    <section id=\"app2\">\n        <ol class=\"nav\">\n            <li><span>1111</span></li>\n            <li><span>2222</span></li>\n        </ol>\n        <ol class=\"content\">\n            <li>content1</li>\n            <li>content2</li>\n        </ol>\n    </section>\n";
-(0, _jquery.default)(html).appendTo((0, _jquery.default)('body .page'));
-var $navBar = (0, _jquery.default)('#app2 .nav');
-var $content = (0, _jquery.default)('#app2 .content');
-$navBar.on('click', 'li', function (e) {
-  var $li = (0, _jquery.default)(e.currentTarget);
-  var index = $li.index();
-  localStorage.setItem('app2-index', index);
-  $li.addClass('selected').siblings().removeClass('selected');
-  $content.children().eq(index).addClass('active').siblings().removeClass('active');
-});
-$navBar.children().eq(localStorage.getItem('app2-index') || 0).trigger('click');
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var $eventBus = (0, _jquery.default)({});
+var model = {
+  data: {
+    index: +localStorage.getItem('app2-index') || 0
+  },
+  update: function update(data) {
+    Object.assign(model.data, data);
+    $eventBus.trigger('model:updated');
+    localStorage.setItem('app2-index', model.data.index);
+  }
+};
+var view = {
+  container: null,
+  html: function html(index) {
+    return "\n            <div>\n                <ol class=\"nav\">\n                    <li class=\"".concat(index ? '' : 'selected', "\" data-index=\"0\"><span>1111</span></li>\n                    <li class=\"").concat(index ? 'selected' : '', "\" data-index=\"1\"><span>2222</span></li>\n                </ol>\n                <ol class=\"content\">\n                    <li class=\"").concat(index ? '' : 'active', "\">content1</li>\n                    <li class=\"").concat(index ? 'active' : '', "\">content2</li>\n                </ol>\n            </div>\n        ");
+  },
+  init: function init(container) {
+    view.container = (0, _jquery.default)(container);
+  },
+  render: function render(index) {
+    if (view.container.children().length) {
+      view.container.empty();
+    }
+
+    (0, _jquery.default)(view.html(index)).appendTo(view.container);
+  }
+};
+var controller = {
+  init: function init(container) {
+    view.init(container);
+    view.render(model.data.index);
+    controller.autoBindEvents();
+    $eventBus.on('model:updated', function () {
+      view.render(model.data.index);
+    });
+  },
+  events: {
+    'click .nav li': 'switch'
+  },
+  switch: function _switch(e) {
+    var selectedIndex = +e.currentTarget.dataset.index;
+
+    if (selectedIndex !== model.data.index) {
+      model.update({
+        index: selectedIndex
+      });
+    }
+  },
+  autoBindEvents: function autoBindEvents() {
+    for (var key in controller.events) {
+      var _key$split = key.split(' '),
+          _key$split2 = _toArray(_key$split),
+          event = _key$split2[0],
+          selector = _key$split2.slice(1);
+
+      view.container.on(event, selector.join(' '), controller[controller.events[key]]);
+    }
+  }
+};
+var _default = controller;
+exports.default = _default;
 },{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11479,7 +11539,7 @@ require("./reset.css");
 
 var _app = _interopRequireDefault(require("./app1.js"));
 
-require("./app2.js");
+var _app2 = _interopRequireDefault(require("./app2.js"));
 
 require("./app3.js");
 
@@ -11488,6 +11548,8 @@ require("./app4.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _app.default.init('body .page #app1');
+
+_app2.default.init('body .page #app2');
 },{"./global.css":"global.css","./reset.css":"reset.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

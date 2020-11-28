@@ -5,12 +5,13 @@ const $eventBus = $({})
 
 const model = {
     data: {
-        n: +localStorage.getItem('n') || 100
+        n: +localStorage.getItem('app1-n') || 100
     },
 
     update(data) {
         Object.assign(model.data, data)
         $eventBus.trigger('model:updated')
+        localStorage.setItem('app1-n', model.data.n)
     }
 }
 
@@ -79,10 +80,7 @@ const controller = {
     autoBindEvents() {
         for (let key in controller.events) {
             let [event, selector] = key.split(' ')
-            view.container.on(event, selector, () => {
-                controller[controller.events[key]]()
-                localStorage.setItem('n', model.data.n)
-            })
+            view.container.on(event, selector, controller[controller.events[key]])
         }
     }
 }
