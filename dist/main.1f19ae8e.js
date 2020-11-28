@@ -11311,6 +11311,16 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+var $eventBus = (0, _jquery.default)({});
+var model = {
+  data: {
+    n: +localStorage.getItem('n') || 100
+  },
+  update: function update(data) {
+    Object.assign(model.data, data);
+    $eventBus.trigger('model:updated');
+  }
+};
 var view = {
   container: null,
   html: "\n        <div>\n            <div class=\"output\">\n                <span>{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add\">+1</button>\n                <button id=\"minus\">-1</button>\n                <button id=\"multi\">*2</button>\n                <button id=\"devide\">/2</button>\n            </div>\n        </div>\n    ",
@@ -11330,6 +11340,9 @@ var controller = {
     view.init(container);
     view.render(model.data.n);
     controller.autoBindEvents();
+    $eventBus.on('model:updated', function () {
+      view.render(model.data.n);
+    });
   },
   events: {
     'click #add': 'add',
@@ -11338,16 +11351,24 @@ var controller = {
     'click #devide': 'devide'
   },
   add: function add() {
-    model.data.n += 1;
+    model.update({
+      n: model.data.n + 1
+    });
   },
   minus: function minus() {
-    model.data.n -= 1;
+    model.update({
+      n: model.data.n - 1
+    });
   },
   multi: function multi() {
-    model.data.n *= 2;
+    model.update({
+      n: model.data.n * 2
+    });
   },
   devide: function devide() {
-    model.data.n /= 2;
+    model.update({
+      n: model.data.n / 2
+    });
   },
   autoBindEvents: function autoBindEvents() {
     var _loop = function _loop(key) {
@@ -11358,7 +11379,6 @@ var controller = {
 
       view.container.on(event, selector, function () {
         controller[controller.events[key]]();
-        view.render(model.data.n);
         localStorage.setItem('n', model.data.n);
       });
     };
@@ -11366,11 +11386,6 @@ var controller = {
     for (var key in controller.events) {
       _loop(key);
     }
-  }
-};
-var model = {
-  data: {
-    n: +localStorage.getItem('n') || 100
   }
 };
 var _default = controller;
@@ -11501,7 +11516,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61450" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55818" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

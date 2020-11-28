@@ -1,6 +1,19 @@
 import './app1.css'
 import $ from 'jquery'
 
+const $eventBus = $({})
+
+const model = {
+    data: {
+        n: +localStorage.getItem('n') || 100
+    },
+
+    update(data) {
+        Object.assign(model.data, data)
+        $eventBus.trigger('model:updated')
+    }
+}
+
 const view = {
     container: null,
 
@@ -35,6 +48,9 @@ const controller = {
         view.init(container)
         view.render(model.data.n)
         controller.autoBindEvents()
+        $eventBus.on('model:updated', () => {
+            view.render(model.data.n)
+        })
     },
 
     events: {
@@ -45,19 +61,19 @@ const controller = {
     },
 
     add() {
-        model.data.n += 1
+        model.update({n: model.data.n + 1})
     },
 
     minus() {
-        model.data.n -= 1
+        model.update({n: model.data.n - 1})
     },
 
     multi() {
-        model.data.n *= 2
+        model.update({n: model.data.n * 2})
     },
 
     devide() {
-        model.data.n /= 2
+        model.update({n: model.data.n / 2})
     },
 
     autoBindEvents() {
@@ -65,16 +81,9 @@ const controller = {
             let [event, selector] = key.split(' ')
             view.container.on(event, selector, () => {
                 controller[controller.events[key]]()
-                view.render(model.data.n)
                 localStorage.setItem('n', model.data.n)
             })
         }
-    }
-}
-
-const model = {
-    data: {
-        n: +localStorage.getItem('n') || 100
     }
 }
 
