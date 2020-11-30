@@ -11405,6 +11405,53 @@ var View = /*#__PURE__*/function () {
 
 var _default = View;
 exports.default = _default;
+},{"jquery":"../node_modules/jquery/dist/jquery.js"}],"base/EventBus.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _jquery = _interopRequireDefault(require("jquery"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var EventBus = /*#__PURE__*/function () {
+  function EventBus() {
+    _classCallCheck(this, EventBus);
+
+    this._eventBus = (0, _jquery.default)({});
+  }
+
+  _createClass(EventBus, [{
+    key: "on",
+    value: function on(eventName, fn) {
+      return this._eventBus.on(eventName, fn);
+    }
+  }, {
+    key: "trigger",
+    value: function trigger(eventName, data) {
+      return this._eventBus.trigger(eventName, data);
+    }
+  }, {
+    key: "off",
+    value: function off(eventName, fn) {
+      return this._eventBus.off(eventName, fn);
+    }
+  }]);
+
+  return EventBus;
+}();
+
+var _default = EventBus;
+exports.default = _default;
 },{"jquery":"../node_modules/jquery/dist/jquery.js"}],"app1.js":[function(require,module,exports) {
 "use strict";
 
@@ -11421,16 +11468,18 @@ var _Model = _interopRequireDefault(require("./base/Model.js"));
 
 var _View = _interopRequireDefault(require("./base/View.js"));
 
+var _EventBus = _interopRequireDefault(require("./base/EventBus.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $eventBus = (0, _jquery.default)({});
+var eventBus = new _EventBus.default();
 var model = new _Model.default({
   data: {
     n: +localStorage.getItem('app1-n') || 100
   },
   update: function update(data) {
     Object.assign(this.data, data);
-    $eventBus.trigger('model:updated');
+    eventBus.trigger('model:updated');
     localStorage.setItem('app1-n', this.data.n);
   }
 });
@@ -11453,7 +11502,7 @@ var init = function init(el) {
       'click #multi': 'multi',
       'click #devide': 'devide'
     },
-    eventBus: $eventBus,
+    eventBus: eventBus,
     add: function add() {
       model.update({
         n: model.data.n + 1
@@ -11479,7 +11528,7 @@ var init = function init(el) {
 
 var _default = init;
 exports.default = _default;
-},{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app2.css":[function(require,module,exports) {
+},{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js","./base/EventBus.js":"base/EventBus.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -11500,16 +11549,18 @@ var _Model = _interopRequireDefault(require("./base/Model.js"));
 
 var _View = _interopRequireDefault(require("./base/View.js"));
 
+var _EventBus = _interopRequireDefault(require("./base/EventBus.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $eventBus = (0, _jquery.default)({});
+var eventBus = new _EventBus.default();
 var model = new _Model.default({
   data: {
     index: +localStorage.getItem('app2-index') || 0
   },
   update: function update(data) {
     Object.assign(this.data, data);
-    $eventBus.trigger('model:updated');
+    eventBus.trigger('model:updated');
     localStorage.setItem('app2-index', this.data.index);
   }
 });
@@ -11531,7 +11582,7 @@ var init = function init(el) {
     events: {
       'click .nav li': 'switch'
     },
-    eventBus: $eventBus,
+    eventBus: eventBus,
     switch: function _switch(e) {
       var selectedIndex = +e.currentTarget.dataset.index;
 
@@ -11546,7 +11597,7 @@ var init = function init(el) {
 
 var _default = init;
 exports.default = _default;
-},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app3.css":[function(require,module,exports) {
+},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js","./base/EventBus.js":"base/EventBus.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
