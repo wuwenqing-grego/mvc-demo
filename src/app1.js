@@ -1,56 +1,58 @@
 import './app1.css'
 import $ from 'jquery'
+import Model from './base/Model.js'
+import View from './base/View.js'
 
 const $eventBus = $({})
 
-const model = {
+const model = new Model({
     data: {
         n: +localStorage.getItem('app1-n') || 100
     },
 
     update(data) {
-        Object.assign(model.data, data)
+        Object.assign(this.data, data)
         $eventBus.trigger('model:updated')
-        localStorage.setItem('app1-n', model.data.n)
+        localStorage.setItem('app1-n', this.data.n)
     }
-}
-
-const view = {
-    container: null,
-
-    html: `
-        <div>
-            <div class="output">
-                <span>{{n}}</span>
-            </div>
-            <div class="actions">
-                <button id="add">+1</button>
-                <button id="minus">-1</button>
-                <button id="multi">*2</button>
-                <button id="devide">/2</button>
-            </div>
-        </div>
-    `,
-
-    init(container) {
-        view.container = $(container)
-    },
-
-    render(val) {
-        if (view.container.children().length) {
-            view.container.empty()
-        }
-        $(view.html.replace('{{n}}', val)).appendTo(view.container)
-    }
-}
+})
 
 const controller = {
+    view: null,
+
+    initV(container) {
+        controller.view = new View({
+            el: container,
+        
+            html: `
+                <div>
+                    <div class="output">
+                        <span>{{n}}</span>
+                    </div>
+                    <div class="actions">
+                        <button id="add">+1</button>
+                        <button id="minus">-1</button>
+                        <button id="multi">*2</button>
+                        <button id="devide">/2</button>
+                    </div>
+                </div>
+            `,
+        
+            render(val) {
+                if (this.container.children().length) {
+                    this.container.empty()
+                }
+                $(this.html.replace('{{n}}', val)).appendTo(this.container)
+            }
+        })
+    },
+
     init(container) {
-        view.init(container)
-        view.render(model.data.n)
+        controller.initV(container)
+        controller.view.render(model.data.n)
         controller.autoBindEvents()
         $eventBus.on('model:updated', () => {
-            view.render(model.data.n)
+            controller.view.render(model.data.n)
         })
     },
 
@@ -80,7 +82,7 @@ const controller = {
     autoBindEvents() {
         for (let key in controller.events) {
             let [event, selector] = key.split(' ')
-            view.container.on(event, selector, controller[controller.events[key]])
+            controller.view.container.on(event, selector, controller[controller.events[key]])
         }
     }
 }

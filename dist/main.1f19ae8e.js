@@ -11285,7 +11285,90 @@ if ( typeof noGlobal === "undefined" ) {
 return jQuery;
 } );
 
-},{"process":"../../../../../../.config/yarn/global/node_modules/process/browser.js"}],"app1.js":[function(require,module,exports) {
+},{"process":"../../../../../../.config/yarn/global/node_modules/process/browser.js"}],"base/Model.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Model = /*#__PURE__*/function () {
+  function Model(options) {
+    var _this = this;
+
+    _classCallCheck(this, Model);
+
+    this.properties = ['data', 'create', 'delete', 'update', 'read'];
+    this.properties.forEach(function (key) {
+      if (key in options) {
+        _this[key] = options[key];
+      }
+    });
+  }
+
+  _createClass(Model, [{
+    key: "create",
+    value: function create() {
+      console && console.error && console.error('You have not realized this function!');
+    }
+  }, {
+    key: "delete",
+    value: function _delete() {
+      console && console.error && console.error('You have not realized this function!');
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      console && console.error && console.error('You have not realized this function!');
+    }
+  }, {
+    key: "read",
+    value: function read() {
+      console && console.error && console.error('You have not realized this function!');
+    }
+  }]);
+
+  return Model;
+}();
+
+var _default = Model;
+exports.default = _default;
+},{}],"base/View.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _jquery = _interopRequireDefault(require("jquery"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var View = function View(_ref) {
+  var el = _ref.el,
+      html = _ref.html,
+      render = _ref.render;
+
+  _classCallCheck(this, View);
+
+  this.container = (0, _jquery.default)(el);
+  this.html = html;
+  this.render = render;
+};
+
+var _default = View;
+exports.default = _default;
+},{"jquery":"../node_modules/jquery/dist/jquery.js"}],"app1.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11296,6 +11379,10 @@ exports.default = void 0;
 require("./app1.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
+
+var _Model = _interopRequireDefault(require("./base/Model.js"));
+
+var _View = _interopRequireDefault(require("./base/View.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11312,37 +11399,37 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var $eventBus = (0, _jquery.default)({});
-var model = {
+var model = new _Model.default({
   data: {
     n: +localStorage.getItem('app1-n') || 100
   },
   update: function update(data) {
-    Object.assign(model.data, data);
+    Object.assign(this.data, data);
     $eventBus.trigger('model:updated');
-    localStorage.setItem('app1-n', model.data.n);
+    localStorage.setItem('app1-n', this.data.n);
   }
-};
-var view = {
-  container: null,
-  html: "\n        <div>\n            <div class=\"output\">\n                <span>{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add\">+1</button>\n                <button id=\"minus\">-1</button>\n                <button id=\"multi\">*2</button>\n                <button id=\"devide\">/2</button>\n            </div>\n        </div>\n    ",
-  init: function init(container) {
-    view.container = (0, _jquery.default)(container);
-  },
-  render: function render(val) {
-    if (view.container.children().length) {
-      view.container.empty();
-    }
-
-    (0, _jquery.default)(view.html.replace('{{n}}', val)).appendTo(view.container);
-  }
-};
+});
 var controller = {
+  view: null,
+  initV: function initV(container) {
+    controller.view = new _View.default({
+      el: container,
+      html: "\n                <div>\n                    <div class=\"output\">\n                        <span>{{n}}</span>\n                    </div>\n                    <div class=\"actions\">\n                        <button id=\"add\">+1</button>\n                        <button id=\"minus\">-1</button>\n                        <button id=\"multi\">*2</button>\n                        <button id=\"devide\">/2</button>\n                    </div>\n                </div>\n            ",
+      render: function render(val) {
+        if (this.container.children().length) {
+          this.container.empty();
+        }
+
+        (0, _jquery.default)(this.html.replace('{{n}}', val)).appendTo(this.container);
+      }
+    });
+  },
   init: function init(container) {
-    view.init(container);
-    view.render(model.data.n);
+    controller.initV(container);
+    controller.view.render(model.data.n);
     controller.autoBindEvents();
     $eventBus.on('model:updated', function () {
-      view.render(model.data.n);
+      controller.view.render(model.data.n);
     });
   },
   events: {
@@ -11378,13 +11465,13 @@ var controller = {
           event = _key$split2[0],
           selector = _key$split2[1];
 
-      view.container.on(event, selector, controller[controller.events[key]]);
+      controller.view.container.on(event, selector, controller[controller.events[key]]);
     }
   }
 };
 var _default = controller;
 exports.default = _default;
-},{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app2.css":[function(require,module,exports) {
+},{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -11401,6 +11488,8 @@ require("./app2.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
+var _Model = _interopRequireDefault(require("./base/Model.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
@@ -11416,7 +11505,7 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.it
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var $eventBus = (0, _jquery.default)({});
-var model = {
+var model = new _Model.default({
   data: {
     index: +localStorage.getItem('app2-index') || 0
   },
@@ -11425,7 +11514,7 @@ var model = {
     $eventBus.trigger('model:updated');
     localStorage.setItem('app2-index', model.data.index);
   }
-};
+});
 var view = {
   container: null,
   html: function html(index) {
@@ -11476,7 +11565,7 @@ var controller = {
 };
 var _default = controller;
 exports.default = _default;
-},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app3.css":[function(require,module,exports) {
+},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -11578,7 +11667,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55818" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63719" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

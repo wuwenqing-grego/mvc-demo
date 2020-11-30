@@ -1,9 +1,10 @@
 import './app2.css'
 import $ from 'jquery'
+import Model from './base/Model.js'
 
 const $eventBus = $({})
 
-const model = {
+const model = new Model({
     data: {
         index: +localStorage.getItem('app2-index') || 0
     },
@@ -13,7 +14,7 @@ const model = {
         $eventBus.trigger('model:updated')
         localStorage.setItem('app2-index', model.data.index)
     }
-}
+})
 
 const view = {
     container: null,
