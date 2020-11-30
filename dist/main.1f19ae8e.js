@@ -11352,7 +11352,7 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
@@ -11360,7 +11360,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -11391,11 +11391,11 @@ var View = /*#__PURE__*/function () {
     value: function autoBindEvents() {
       for (var key in this.events) {
         var _key$split = key.split(' '),
-            _key$split2 = _slicedToArray(_key$split, 2),
+            _key$split2 = _toArray(_key$split),
             event = _key$split2[0],
-            selector = _key$split2[1];
+            selector = _key$split2.slice(1);
 
-        this.container.on(event, selector, this[this.events[key]]);
+        this.container.on(event, selector.join(' '), this[this.events[key]]);
       }
     }
   }]);
@@ -11436,7 +11436,7 @@ var model = new _Model.default({
 });
 
 var init = function init(el) {
-  var view = new _View.default({
+  new _View.default({
     el: el,
     html: "\n            <div>\n                <div class=\"output\">\n                    <span>{{n}}</span>\n                </div>\n                <div class=\"actions\">\n                    <button id=\"add\">+1</button>\n                    <button id=\"minus\">-1</button>\n                    <button id=\"multi\">*2</button>\n                    <button id=\"devide\">/2</button>\n                </div>\n            </div>\n        ",
     render: function render(data) {
@@ -11498,19 +11498,9 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 var _Model = _interopRequireDefault(require("./base/Model.js"));
 
+var _View = _interopRequireDefault(require("./base/View.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var $eventBus = (0, _jquery.default)({});
 var model = new _Model.default({
@@ -11523,52 +11513,40 @@ var model = new _Model.default({
     localStorage.setItem('app2-index', this.data.index);
   }
 });
-var view = {
-  container: null,
-  html: function html(index) {
-    return "\n            <div>\n                <ol class=\"nav\">\n                    <li class=\"".concat(index ? '' : 'selected', "\" data-index=\"0\"><span>1111</span></li>\n                    <li class=\"").concat(index ? 'selected' : '', "\" data-index=\"1\"><span>2222</span></li>\n                </ol>\n                <ol class=\"content\">\n                    <li class=\"").concat(index ? '' : 'active', "\">content1</li>\n                    <li class=\"").concat(index ? 'active' : '', "\">content2</li>\n                </ol>\n            </div>\n        ");
-  },
-  render: function render(index) {
-    if (view.container.children().length) {
-      view.container.empty();
-    }
 
-    (0, _jquery.default)(view.html(index)).appendTo(view.container);
-  },
-  init: function init(container) {
-    view.container = (0, _jquery.default)(container);
-    view.render(model.data.index);
-    view.autoBindEvents();
-    $eventBus.on('model:updated', function () {
-      view.render(model.data.index);
-    });
-  },
-  events: {
-    'click .nav li': 'switch'
-  },
-  switch: function _switch(e) {
-    var selectedIndex = +e.currentTarget.dataset.index;
+var init = function init(el) {
+  new _View.default({
+    el: el,
+    html: function html(index) {
+      return "\n                <div>\n                    <ol class=\"nav\">\n                        <li class=\"".concat(index ? '' : 'selected', "\" data-index=\"0\"><span>1111</span></li>\n                        <li class=\"").concat(index ? 'selected' : '', "\" data-index=\"1\"><span>2222</span></li>\n                    </ol>\n                    <ol class=\"content\">\n                        <li class=\"").concat(index ? '' : 'active', "\">content1</li>\n                        <li class=\"").concat(index ? 'active' : '', "\">content2</li>\n                    </ol>\n                </div>\n            ");
+    },
+    render: function render(data) {
+      if (this.container.children().length) {
+        this.container.empty();
+      }
 
-    if (selectedIndex !== model.data.index) {
-      model.update({
-        index: selectedIndex
-      });
-    }
-  },
-  autoBindEvents: function autoBindEvents() {
-    for (var key in view.events) {
-      var _key$split = key.split(' '),
-          _key$split2 = _toArray(_key$split),
-          event = _key$split2[0],
-          selector = _key$split2.slice(1);
+      (0, _jquery.default)(this.html(data.index)).appendTo(this.container);
+    },
+    data: model.data,
+    events: {
+      'click .nav li': 'switch'
+    },
+    eventBus: $eventBus,
+    switch: function _switch(e) {
+      var selectedIndex = +e.currentTarget.dataset.index;
 
-      view.container.on(event, selector.join(' '), view[view.events[key]]);
+      if (selectedIndex !== model.data.index) {
+        model.update({
+          index: selectedIndex
+        });
+      }
     }
-  }
+  });
 };
-var _default = view;
+
+var _default = init;
 exports.default = _default;
-},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js"}],"app3.css":[function(require,module,exports) {
+},{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -11640,8 +11618,7 @@ require("./app4.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _app.default)('body .page #app1');
-
-_app2.default.init('body .page #app2');
+(0, _app2.default)('body .page #app2');
 },{"./global.css":"global.css","./reset.css":"reset.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

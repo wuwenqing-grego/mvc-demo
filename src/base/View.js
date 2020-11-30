@@ -15,8 +15,8 @@ class View {
 
     autoBindEvents() {
         for (let key in this.events) {
-            let [event, selector] = key.split(' ')
-            this.container.on(event, selector, this[this.events[key]])
+            let [event, ...selector] = key.split(' ')
+            this.container.on(event, selector.join(' '), this[this.events[key]])
         }
     }
 }

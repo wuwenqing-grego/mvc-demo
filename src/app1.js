@@ -18,7 +18,7 @@ const model = new Model({
 })
 
 const init = (el) => {
-    const view = new View({
+    new View({
         el: el,
         
         html: `
