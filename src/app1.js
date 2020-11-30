@@ -11,48 +11,42 @@ const model = new Model({
     },
 
     update(data) {
-        Object.assign(this.data, data)
+        Object.assign(model.data, data)
         $eventBus.trigger('model:updated')
-        localStorage.setItem('app1-n', this.data.n)
+        localStorage.setItem('app1-n', model.data.n)
     }
 })
 
-const controller = {
-    view: null,
-
-    initV(container) {
-        controller.view = new View({
-            el: container,
-        
-            html: `
-                <div>
-                    <div class="output">
-                        <span>{{n}}</span>
-                    </div>
-                    <div class="actions">
-                        <button id="add">+1</button>
-                        <button id="minus">-1</button>
-                        <button id="multi">*2</button>
-                        <button id="devide">/2</button>
-                    </div>
-                </div>
-            `,
-        
-            render(val) {
-                if (this.container.children().length) {
-                    this.container.empty()
-                }
-                $(this.html.replace('{{n}}', val)).appendTo(this.container)
-            }
-        })
+const view = {
+    container: null,
+    
+    html: `
+        <div>
+            <div class="output">
+                <span>{{n}}</span>
+            </div>
+            <div class="actions">
+                <button id="add">+1</button>
+                <button id="minus">-1</button>
+                <button id="multi">*2</button>
+                <button id="devide">/2</button>
+            </div>
+        </div>
+    `,
+    
+    render(val) {
+        if (view.container.children().length) {
+            view.container.empty()
+        }
+        $(view.html.replace('{{n}}', val)).appendTo(view.container)
     },
 
     init(container) {
-        controller.initV(container)
-        controller.view.render(model.data.n)
-        controller.autoBindEvents()
+        view.container = $(container)
+        view.render(model.data.n)
+        view.autoBindEvents()
         $eventBus.on('model:updated', () => {
-            controller.view.render(model.data.n)
+            view.render(model.data.n)
         })
     },
 
@@ -80,11 +74,11 @@ const controller = {
     },
 
     autoBindEvents() {
-        for (let key in controller.events) {
+        for (let key in view.events) {
             let [event, selector] = key.split(' ')
-            controller.view.container.on(event, selector, controller[controller.events[key]])
+            view.container.on(event, selector, view[view.events[key]])
         }
     }
 }
 
-export default controller
+export default view

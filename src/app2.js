@@ -34,45 +34,39 @@ const view = {
         `
     },
 
-    init(container) {
-        view.container = $(container)
-    },
-
     render(index) {
         if (view.container.children().length) {
             view.container.empty()
         }
         $(view.html(index)).appendTo(view.container)
-    }
-}
+    },
 
-const controller = {
     init(container) {
-        view.init(container)
+        view.container = $(container)
         view.render(model.data.index)
-        controller.autoBindEvents()
+        view.autoBindEvents()
         $eventBus.on('model:updated', () => {
             view.render(model.data.index)
         })
     },
-
+    
     events: {
         'click .nav li': 'switch'
     },
-
+    
     switch(e) {
         const selectedIndex = +e.currentTarget.dataset.index
         if (selectedIndex !== model.data.index) {
             model.update({index: selectedIndex})
         }
     },
-
+    
     autoBindEvents() {
-        for (let key in controller.events) {
+        for (let key in view.events) {
             let [event, ...selector] = key.split(' ')
-            view.container.on(event, selector.join(' '), controller[controller.events[key]])
+            view.container.on(event, selector.join(' '), view[view.events[key]])
         }
     }
 }
 
-export default controller
+export default view

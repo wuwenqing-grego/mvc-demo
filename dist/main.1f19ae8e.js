@@ -11404,32 +11404,27 @@ var model = new _Model.default({
     n: +localStorage.getItem('app1-n') || 100
   },
   update: function update(data) {
-    Object.assign(this.data, data);
+    Object.assign(model.data, data);
     $eventBus.trigger('model:updated');
-    localStorage.setItem('app1-n', this.data.n);
+    localStorage.setItem('app1-n', model.data.n);
   }
 });
-var controller = {
-  view: null,
-  initV: function initV(container) {
-    controller.view = new _View.default({
-      el: container,
-      html: "\n                <div>\n                    <div class=\"output\">\n                        <span>{{n}}</span>\n                    </div>\n                    <div class=\"actions\">\n                        <button id=\"add\">+1</button>\n                        <button id=\"minus\">-1</button>\n                        <button id=\"multi\">*2</button>\n                        <button id=\"devide\">/2</button>\n                    </div>\n                </div>\n            ",
-      render: function render(val) {
-        if (this.container.children().length) {
-          this.container.empty();
-        }
+var view = {
+  container: null,
+  html: "\n        <div>\n            <div class=\"output\">\n                <span>{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add\">+1</button>\n                <button id=\"minus\">-1</button>\n                <button id=\"multi\">*2</button>\n                <button id=\"devide\">/2</button>\n            </div>\n        </div>\n    ",
+  render: function render(val) {
+    if (view.container.children().length) {
+      view.container.empty();
+    }
 
-        (0, _jquery.default)(this.html.replace('{{n}}', val)).appendTo(this.container);
-      }
-    });
+    (0, _jquery.default)(view.html.replace('{{n}}', val)).appendTo(view.container);
   },
   init: function init(container) {
-    controller.initV(container);
-    controller.view.render(model.data.n);
-    controller.autoBindEvents();
+    view.container = (0, _jquery.default)(container);
+    view.render(model.data.n);
+    view.autoBindEvents();
     $eventBus.on('model:updated', function () {
-      controller.view.render(model.data.n);
+      view.render(model.data.n);
     });
   },
   events: {
@@ -11459,17 +11454,17 @@ var controller = {
     });
   },
   autoBindEvents: function autoBindEvents() {
-    for (var key in controller.events) {
+    for (var key in view.events) {
       var _key$split = key.split(' '),
           _key$split2 = _slicedToArray(_key$split, 2),
           event = _key$split2[0],
           selector = _key$split2[1];
 
-      controller.view.container.on(event, selector, controller[controller.events[key]]);
+      view.container.on(event, selector, view[view.events[key]]);
     }
   }
 };
-var _default = controller;
+var _default = view;
 exports.default = _default;
 },{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
@@ -11520,22 +11515,17 @@ var view = {
   html: function html(index) {
     return "\n            <div>\n                <ol class=\"nav\">\n                    <li class=\"".concat(index ? '' : 'selected', "\" data-index=\"0\"><span>1111</span></li>\n                    <li class=\"").concat(index ? 'selected' : '', "\" data-index=\"1\"><span>2222</span></li>\n                </ol>\n                <ol class=\"content\">\n                    <li class=\"").concat(index ? '' : 'active', "\">content1</li>\n                    <li class=\"").concat(index ? 'active' : '', "\">content2</li>\n                </ol>\n            </div>\n        ");
   },
-  init: function init(container) {
-    view.container = (0, _jquery.default)(container);
-  },
   render: function render(index) {
     if (view.container.children().length) {
       view.container.empty();
     }
 
     (0, _jquery.default)(view.html(index)).appendTo(view.container);
-  }
-};
-var controller = {
+  },
   init: function init(container) {
-    view.init(container);
+    view.container = (0, _jquery.default)(container);
     view.render(model.data.index);
-    controller.autoBindEvents();
+    view.autoBindEvents();
     $eventBus.on('model:updated', function () {
       view.render(model.data.index);
     });
@@ -11553,17 +11543,17 @@ var controller = {
     }
   },
   autoBindEvents: function autoBindEvents() {
-    for (var key in controller.events) {
+    for (var key in view.events) {
       var _key$split = key.split(' '),
           _key$split2 = _toArray(_key$split),
           event = _key$split2[0],
           selector = _key$split2.slice(1);
 
-      view.container.on(event, selector.join(' '), controller[controller.events[key]]);
+      view.container.on(event, selector.join(' '), view[view.events[key]]);
     }
   }
 };
-var _default = controller;
+var _default = view;
 exports.default = _default;
 },{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
