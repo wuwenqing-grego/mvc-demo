@@ -2,7 +2,7 @@ import $ from 'jquery'
 
 class EventBus {
     constructor() {
-        this._eventBus = $({})
+        this._eventBus = $(window)
     }
 
     on(eventName, fn) {

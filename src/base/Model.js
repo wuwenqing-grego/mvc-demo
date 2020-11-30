@@ -1,5 +1,9 @@
-class Model {
+import EventBus from "./EventBus.js"
+
+class Model extends EventBus {
     constructor(options) {
+        super()
+        
         this.properties = ['data', 'create', 'delete', 'update', 'read']
         this.properties.forEach(key => {
             if (key in options) {
@@ -19,7 +23,7 @@ class Model {
     update() {
         console && console.error && console.error('You have not realized this function!')
     }
-    
+
     read() {
         console && console.error && console.error('You have not realized this function!')
     }

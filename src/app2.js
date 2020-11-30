@@ -4,8 +4,6 @@ import Model from './base/Model.js'
 import View from './base/View.js'
 import EventBus from './base/EventBus.js'
 
-const eventBus = new EventBus()
-
 const model = new Model({
     data: {
         index: +localStorage.getItem('app2-index') || 0
@@ -13,7 +11,7 @@ const model = new Model({
 
     update(data) {
         Object.assign(this.data, data)
-        eventBus.trigger('model:updated')
+        this.trigger('model:updated')
         localStorage.setItem('app2-index', this.data.index)
     }
 })
@@ -49,8 +47,6 @@ const init = (el) => {
         events: {
             'click .nav li': 'switch'
         },
-
-        eventBus: eventBus,
         
         switch(e) {
             const selectedIndex = +e.currentTarget.dataset.index

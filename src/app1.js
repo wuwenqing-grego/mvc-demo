@@ -4,8 +4,6 @@ import Model from './base/Model.js'
 import View from './base/View.js'
 import EventBus from './base/EventBus.js'
 
-const eventBus = new EventBus()
-
 const model = new Model({
     data: {
         n: +localStorage.getItem('app1-n') || 100
@@ -13,7 +11,7 @@ const model = new Model({
 
     update(data) {
         Object.assign(this.data, data)
-        eventBus.trigger('model:updated')
+        this.trigger('model:updated')
         localStorage.setItem('app1-n', this.data.n)
     }
 })
@@ -51,8 +49,6 @@ const init = (el) => {
             'click #multi': 'multi',
             'click #devide': 'devide'
         },
-    
-        eventBus: eventBus,
     
         add() {
             model.update({n: model.data.n + 1})
