@@ -11352,19 +11352,56 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var View = function View(_ref) {
-  var el = _ref.el,
-      html = _ref.html,
-      render = _ref.render;
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-  _classCallCheck(this, View);
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-  this.container = (0, _jquery.default)(el);
-  this.html = html;
-  this.render = render;
-};
+var View = /*#__PURE__*/function () {
+  function View(options) {
+    var _this = this;
+
+    _classCallCheck(this, View);
+
+    Object.assign(this, options); // {el, html, render, data, events, eventBus}
+
+    this.container = (0, _jquery.default)(this.el);
+    this.render(this.data);
+    this.autoBindEvents();
+    this.eventBus.on('model:updated', function () {
+      _this.render(_this.data);
+    });
+  }
+
+  _createClass(View, [{
+    key: "autoBindEvents",
+    value: function autoBindEvents() {
+      for (var key in this.events) {
+        var _key$split = key.split(' '),
+            _key$split2 = _slicedToArray(_key$split, 2),
+            event = _key$split2[0],
+            selector = _key$split2[1];
+
+        this.container.on(event, selector, this[this.events[key]]);
+      }
+    }
+  }]);
+
+  return View;
+}();
 
 var _default = View;
 exports.default = _default;
@@ -11386,85 +11423,61 @@ var _View = _interopRequireDefault(require("./base/View.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 var $eventBus = (0, _jquery.default)({});
 var model = new _Model.default({
   data: {
     n: +localStorage.getItem('app1-n') || 100
   },
   update: function update(data) {
-    Object.assign(model.data, data);
+    Object.assign(this.data, data);
     $eventBus.trigger('model:updated');
-    localStorage.setItem('app1-n', model.data.n);
+    localStorage.setItem('app1-n', this.data.n);
   }
 });
-var view = {
-  container: null,
-  html: "\n        <div>\n            <div class=\"output\">\n                <span>{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add\">+1</button>\n                <button id=\"minus\">-1</button>\n                <button id=\"multi\">*2</button>\n                <button id=\"devide\">/2</button>\n            </div>\n        </div>\n    ",
-  render: function render(val) {
-    if (view.container.children().length) {
-      view.container.empty();
-    }
 
-    (0, _jquery.default)(view.html.replace('{{n}}', val)).appendTo(view.container);
-  },
-  init: function init(container) {
-    view.container = (0, _jquery.default)(container);
-    view.render(model.data.n);
-    view.autoBindEvents();
-    $eventBus.on('model:updated', function () {
-      view.render(model.data.n);
-    });
-  },
-  events: {
-    'click #add': 'add',
-    'click #minus': 'minus',
-    'click #multi': 'multi',
-    'click #devide': 'devide'
-  },
-  add: function add() {
-    model.update({
-      n: model.data.n + 1
-    });
-  },
-  minus: function minus() {
-    model.update({
-      n: model.data.n - 1
-    });
-  },
-  multi: function multi() {
-    model.update({
-      n: model.data.n * 2
-    });
-  },
-  devide: function devide() {
-    model.update({
-      n: model.data.n / 2
-    });
-  },
-  autoBindEvents: function autoBindEvents() {
-    for (var key in view.events) {
-      var _key$split = key.split(' '),
-          _key$split2 = _slicedToArray(_key$split, 2),
-          event = _key$split2[0],
-          selector = _key$split2[1];
+var init = function init(el) {
+  var view = new _View.default({
+    el: el,
+    html: "\n            <div>\n                <div class=\"output\">\n                    <span>{{n}}</span>\n                </div>\n                <div class=\"actions\">\n                    <button id=\"add\">+1</button>\n                    <button id=\"minus\">-1</button>\n                    <button id=\"multi\">*2</button>\n                    <button id=\"devide\">/2</button>\n                </div>\n            </div>\n        ",
+    render: function render(data) {
+      if (this.container.children().length) {
+        this.container.empty();
+      }
 
-      view.container.on(event, selector, view[view.events[key]]);
+      (0, _jquery.default)(this.html.replace('{{n}}', data.n)).appendTo(this.container);
+    },
+    data: model.data,
+    events: {
+      'click #add': 'add',
+      'click #minus': 'minus',
+      'click #multi': 'multi',
+      'click #devide': 'devide'
+    },
+    eventBus: $eventBus,
+    add: function add() {
+      model.update({
+        n: model.data.n + 1
+      });
+    },
+    minus: function minus() {
+      model.update({
+        n: model.data.n - 1
+      });
+    },
+    multi: function multi() {
+      model.update({
+        n: model.data.n * 2
+      });
+    },
+    devide: function devide() {
+      model.update({
+        n: model.data.n / 2
+      });
     }
-  }
+  });
 };
-var _default = view;
+
+var _default = init;
 exports.default = _default;
 },{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js","./base/Model.js":"base/Model.js","./base/View.js":"base/View.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
@@ -11505,9 +11518,9 @@ var model = new _Model.default({
     index: +localStorage.getItem('app2-index') || 0
   },
   update: function update(data) {
-    Object.assign(model.data, data);
+    Object.assign(this.data, data);
     $eventBus.trigger('model:updated');
-    localStorage.setItem('app2-index', model.data.index);
+    localStorage.setItem('app2-index', this.data.index);
   }
 });
 var view = {
@@ -11626,7 +11639,7 @@ require("./app4.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app.default.init('body .page #app1');
+(0, _app.default)('body .page #app1');
 
 _app2.default.init('body .page #app2');
 },{"./global.css":"global.css","./reset.css":"reset.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {

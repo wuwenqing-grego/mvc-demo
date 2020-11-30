@@ -10,9 +10,9 @@ const model = new Model({
     },
 
     update(data) {
-        Object.assign(model.data, data)
+        Object.assign(this.data, data)
         $eventBus.trigger('model:updated')
-        localStorage.setItem('app2-index', model.data.index)
+        localStorage.setItem('app2-index', this.data.index)
     }
 })
 
